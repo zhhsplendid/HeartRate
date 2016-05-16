@@ -46,7 +46,10 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
-# data
+# Matlab auto save files
+*.asv
+
+# Data
 wearable-raw-data
 sync_data.sh
 

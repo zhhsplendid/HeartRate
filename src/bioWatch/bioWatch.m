@@ -1,15 +1,17 @@
 
 clear all;
 
-str_acc1 = strcat('/Users/swadhin/UT_Spring2016/Emotion_Sense/Dataset/watch1_samsung/', int2str(7),'_watch_acc.txt');
-str_acc2 = strcat('/Users/swadhin/UT_Spring2016/Emotion_Sense/Dataset/watch2_moto/', int2str(7),'_watch_acc.txt');
+%You can change here
+DATA_PATH = 'C:/Users/zhhsp/Documents/HeartRate/wearable-raw-data/';
 
-str_gyro1 = strcat('/Users/swadhin/UT_Spring2016/Emotion_Sense/Dataset/watch1_samsung/', int2str(7),'_watch_gyro.txt');
-str_gyro2 = strcat('/Users/swadhin/UT_Spring2016/Emotion_Sense/Dataset/watch2_moto/', int2str(7),'_watch_gyro.txt');
+str_acc1 = strcat([DATA_PATH, 'watch1_samsung/'], int2str(7),'_watch_acc.txt');
+str_acc2 = strcat([DATA_PATH, 'watch2_moto/'], int2str(7),'_watch_acc.txt');
 
-str_heart = strcat('/Users/swadhin/UT_Spring2016/Emotion_Sense/Dataset/heartrate/', 'rawBeatData-',int2str(4),'.csv');
-str_heart1 = strcat('/Users/swadhin/UT_Spring2016/Emotion_Sense/Dataset/heartrate/', 'rawHRData-',int2str(4),'.csv');
+str_gyro1 = strcat([DATA_PATH, 'watch1_samsung/'], int2str(7),'_watch_gyro.txt');
+str_gyro2 = strcat([DATA_PATH, 'watch2_moto/'], int2str(7),'_watch_gyro.txt');
 
+str_heart = strcat([DATA_PATH, 'heartrate/'], 'rawBeatData-',int2str(4),'.csv');
+str_heart1 = strcat([DATA_PATH, 'heartrate/'], 'rawHRData-',int2str(4),'.csv');
 
 data1 = importdata(str_acc1, ':');
 data2 = importdata(str_acc2, ':');
