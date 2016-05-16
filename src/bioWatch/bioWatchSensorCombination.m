@@ -24,7 +24,7 @@ function [ predicted_bpm ] = bioWatchSensorCombination(predicted_bpm_sensor, pea
   end
   
   for i = 1:numSensors
-    predicted_bpm = (peaks(i) * 1.0) / psum * predicted_bpm_sensor(i);
+    predicted_bpm = predicted_bpm + (peaks(i) * 1.0) / psum * predicted_bpm_sensor(i);
   end
 end
 

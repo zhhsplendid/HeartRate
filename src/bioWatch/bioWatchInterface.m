@@ -12,7 +12,7 @@ function [predicted_bpm, peak] = bioWatchInterface(data)
 
   AVG_FILTER_SIZE = 14;
 
-  rawData = zscore([data(:,2), data(:,3), data(:,4)])
+  rawData = zscore([data(:,2), data(:,3), data(:,4)]);
   
   %1/7th of Second ~10 point moving average for 100Hz Data
   B = 1/ AVG_FILTER_SIZE * ones(AVG_FILTER_SIZE, 1);
