@@ -1,4 +1,4 @@
-function [time_ret, norm_ret] = sampleDataWithinTime( data, sample_duration)
+function [time_ret, norm_ret] = sampleDataWithinTime( data, sample_begin, sample_end)
 % This function draw figure for data within certain time.
 % The figure x-axis is time and y-axis is L-2 norm for 
 %
@@ -13,7 +13,7 @@ function [time_ret, norm_ret] = sampleDataWithinTime( data, sample_duration)
 %   norm_ret: size n * 1, the norm values of sampled data
 
   relative_time = data(:,1) - data(1,1);
-  indices = find(relative_time < sample_duration);
+  indices = find(relative_time < sample_end & relative_time >= sample_begin);
   n = length(indices);
   norm_ret = zeros(n, 1);
   time_ret = zeros(n, 1);

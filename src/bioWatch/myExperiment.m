@@ -1,4 +1,6 @@
-function [  ] = bioWatchExperiment( )
+function [  ] = myExperiment( )
+% This function is just used by Huihuang Zheng to do experiments.
+% It shouldn't be in the published src code...
 
   EXPR_ID = 4;
   %DATA_PATH = 'C:/Users/zhhsp/Documents/HeartRate/wearable-raw-data/new_experiment_1/';
@@ -29,9 +31,9 @@ function [  ] = bioWatchExperiment( )
   
   % Sample time used for drawing figure
   SAMPLE_BEGIN = 0;
-  SAMPLE_DURATION = 30000;
+  SAMPLE_DURATION = 10000;
   SAMPLE_END = SAMPLE_BEGIN + SAMPLE_DURATION;
-  
+
   numData = length(DATA_FILES);
   
   for i = 1: numData
@@ -44,14 +46,21 @@ function [  ] = bioWatchExperiment( )
   predicted_bpm_sensor = zeros(ACC_GYRO_INDEX, 1);
   peaks = zeros(ACC_GYRO_INDEX, 1);
   
+  finalTimedData{ACC_GYRO_INDEX} = [];
   for i = 1: ACC_GYRO_INDEX
-    [predicted_bpm_sensor(i), peaks(i)] = bioWatchInterface(data{i});
+    [predicted_bpm_sensor(i), peaks(i), finalTimedData{i}] = bioWatchInterface(data{i});
   end
   
-  predicted_bpm_acc = bioWatchSensorCombination(predicted_bpm_sensor(1:ACC_INDEX), peaks(1:ACC_INDEX))
-  predicted_bpm = bioWatchSensorCombination(predicted_bpm_sensor(1:ACC_GYRO_INDEX), peaks(1:ACC_GYRO_INDEX))
   
-  for i = 1: numData
+  
+  for i = 1: ACC_GYRO_INDEX
+    %TODO: here we use different data format.
+     finalTimedData{i} = wavelet_process(finalTimedData{i}, 0.1);
+    
+    [time_ret{i}, norm_ret{i}] = sampleDataWithinTime( finalTimedData{i}, SAMPLE_BEGIN, SAMPLE_END);
+  end
+  
+  for i = ACC_GYRO_INDEX + 1: numData
     [time_ret{i}, norm_ret{i}] = sampleDataWithinTime( data{i}, SAMPLE_BEGIN, SAMPLE_END);
   end
   
@@ -98,6 +107,5 @@ function [  ] = bioWatchExperiment( )
   ylabel('Amplitude')
   title('{\bf Calculated BPM on PPG Sensor in Real Time}')
 
-  
 end
 

@@ -1,14 +1,15 @@
-function [predicted_bpm, peak] = bioWatchInterface(data)
+function [predicted_bpm, peak, finalTimedData] = bioWatchInterface(data)
 % This function gives interface of BioWatch
 % Paper reference: http://affect.media.mit.edu/pdfs/15.Hernandez-McDuff-Picard-PervasiveHealth.pdf
 % Input:
 %   data: n * 4 matrix. (acceleration or gyroscope data) 
 %         The four columns are: timestampe, x, y, z
 % Output:
-%    predicted_bpm: 1 real value. Predicted heart beat per minute
-%    peak: Maximum Amplitude, used for combination of sensors
-%          see bioWatchSensorCombination or paper for the combination
-
+%   predicted_bpm: 1 real value. Predicted heart beat per minute
+%   peak: Maximum Amplitude, used for combination of sensors
+%     see bioWatchSensorCombination or paper for the combination
+% finalTimedData: n * 2 matrix. The two columns are time stamp, processed data
+%                 
 
   AVG_FILTER_SIZE = 14;
 
@@ -25,7 +26,8 @@ function [predicted_bpm, peak] = bioWatchInterface(data)
   
   [b1,a1] = butter(2, [0.66 2.5]/(100/2), 'bandpass');
   finalRawData = filter(b1, a1, sumData);
-  finalTimedData = [(data(:,1) - data(1,1))/1000, finalRawData];
+  %finalTimedData = [(data(:,1) - data(1,1))/1000, finalRawData];
+  finalTimedData = [data(:,1), finalRawData];
   
   %Calculating FFT
   fs = 100;
