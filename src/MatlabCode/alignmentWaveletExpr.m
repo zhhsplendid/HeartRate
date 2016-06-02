@@ -1,4 +1,4 @@
-function [ mean_bpm, predicted_bpm_sensor] = alignmentWaveletExpr(EXPR_ID, USE_CANCEL, USE_WAVELET, wavelet_r, wavelet_order, wavelet_method )
+function [ mean_bpm, predicted_bpm_sensor] = alignmentWaveletExpr(EXPR_ID, USE_CANCEL, USE_WAVELET, wavelet_r, wavelet_order, wavelet_method, data )
 % This function is just used by Huihuang Zheng to do experiments.
 % It shouldn't be in the published src code...
 
@@ -14,8 +14,7 @@ function [ mean_bpm, predicted_bpm_sensor] = alignmentWaveletExpr(EXPR_ID, USE_C
     wavelet_method = 'db1';
   end
  
-  %DATA_PATH = 'C:/Users/zhhsp/Documents/HeartRate/wearable-raw-data/new_experiment_1/';
-  DATA_PATH = 'C:/Users/zhhsp/Documents/HeartRate/wearable-raw-data/';
+  
   OUT_FILE_NAME = 'C:/Users/zhhsp/Documents/HeartRate/output/myExpr.txt';
   
   %{
@@ -27,14 +26,24 @@ function [ mean_bpm, predicted_bpm_sensor] = alignmentWaveletExpr(EXPR_ID, USE_C
                [DATA_PATH, 'heart_data_rename/rawHRData-', int2str(EXPR_ID), '.csv'], ...
               };
   %}
-  DATA_FILES = {[DATA_PATH, 'watch1_samsung/', int2str(EXPR_ID), '_watch_acc.txt'], ...
-               [DATA_PATH, 'watch2_moto/', int2str(EXPR_ID), '_watch_acc.txt'], ...
-               [DATA_PATH, 'watch1_samsung/', int2str(EXPR_ID), '_watch_gyro.txt'], ...
-               [DATA_PATH, 'watch2_moto/', int2str(EXPR_ID), '_watch_gyro.txt'], ...
-               [DATA_PATH, 'heartrate/rawBeatData-', int2str(EXPR_ID), '.csv'], ...
-               [DATA_PATH, 'heartrate/rawHRData-', int2str(EXPR_ID), '.csv'], ...
-              };
-  
+  if nargin < 7 % doesn't have data
+      %DATA_PATH = 'C:/Users/zhhsp/Documents/HeartRate/wearable-raw-data/new_experiment_1/';
+      DATA_PATH = 'C:/Users/zhhsp/Documents/HeartRate/wearable-raw-data/';
+      DATA_FILES = {[DATA_PATH, 'watch1_samsung/', int2str(EXPR_ID), '_watch_acc.txt'], ...
+                   [DATA_PATH, 'watch2_moto/', int2str(EXPR_ID), '_watch_acc.txt'], ...
+                   [DATA_PATH, 'watch1_samsung/', int2str(EXPR_ID), '_watch_gyro.txt'], ...
+                   [DATA_PATH, 'watch2_moto/', int2str(EXPR_ID), '_watch_gyro.txt'], ...
+                   [DATA_PATH, 'heartrate/rawBeatData-', int2str(EXPR_ID), '.csv'], ...
+                   [DATA_PATH, 'heartrate/rawHRData-', int2str(EXPR_ID), '.csv'], ...
+                  };
+      numData = length(DATA_FILES);
+      for i = 1: numData
+        %DATA_FILES{i}
+        data{i} = importdata(DATA_FILES{i}, ':');
+      end
+  end
+          
+          
   % DATA_FILES will be like:
   % DATA_FILES{i} where i from 1 to ACC_INDEX are accelerometer data
   ACC_INDEX = 2; 
@@ -47,12 +56,9 @@ function [ mean_bpm, predicted_bpm_sensor] = alignmentWaveletExpr(EXPR_ID, USE_C
   SAMPLE_DURATION = 30000;
   SAMPLE_END = SAMPLE_BEGIN + SAMPLE_DURATION;
 
-  numData = length(DATA_FILES);
   
-  for i = 1: numData
-    %DATA_FILES{i}
-    data{i} = importdata(DATA_FILES{i}, ':');
-  end
+  
+  
   
   if USE_CANCEL
     data_pairs = [1, 2; 3, 4];
