@@ -12,7 +12,9 @@ function [predicted_bpm, peak, finalTimedData] = bioWatchInterface(data)
 %                 
 
   AVG_FILTER_SIZE = 14;
-
+  LOW_BAND = 0.66;
+  HIGH_BAND = 2.5;
+  
   rawData = zscore([data(:,2), data(:,3), data(:,4)]);
   
   %1/7th of Second ~10 point moving average for 100Hz Data
@@ -37,11 +39,11 @@ function [predicted_bpm, peak, finalTimedData] = bioWatchInterface(data)
   f = (0:n-1) * (fs/n);       % Frequency range
   power = y.*conj(y)/n;       % Power of the DFT
   
-  fnew = f(f >= 0.66 & f <= 2.5);
+  fnew = f(f >= LOW_BAND & f <= HIGH_BAND);
   pnew = [];
   
   for k = 1:1:size(f,2)
-    if f(1,k) >= 0.66 && f(1,k) <= 2.5
+    if f(1,k) >= LOW_BAND && f(1,k) <= HIGH_BAND
       pnew = [pnew, power(k, 1)];
     end
   end
@@ -50,8 +52,24 @@ function [predicted_bpm, peak, finalTimedData] = bioWatchInterface(data)
   peak = max(pnew);
   %ix = find(pnew == p);
   ix = (pnew == peak);
-  
   %The frequency
+  if size(ix, 1) == 0
+    predicted_bpm = 0;
+    return;
+  end
+  peakIndex = -1;
+  for i = 1: length(ix)
+    if ix(i)
+      if peakIndex == -1
+        peakIndex = i;
+      else %multi maximum amplitude
+        ix = false(size(ix));
+        ix(peakIndex) = true;
+        break;
+      end
+    end
+  end
+  
   predicted_bpm = 60 * fnew(1,ix);
   
 end 
