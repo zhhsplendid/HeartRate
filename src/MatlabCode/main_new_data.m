@@ -30,44 +30,42 @@ rp = 1;
 bio_err = zeros(6);
 can_err = zeros(6);
 for expr_id = 1:6
-    if expr_id ~= 3
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        % baseline: Biowatch
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        [bpm, prediction] = alignmentWaveletExpr(expr_id, false, false, 0, 0, '');
-        min_err = 10000;
-        best_prediction = 0;
-        for j = 1:length(prediction) % find best prediction as min error
-         if abs(bpm - prediction(j)) < min_err
-           min_err = abs(bpm - prediction(j));
-           best_prediction = prediction(j);
-         end
-        end
-        fprintf(['%d Biowatch\t', ...
-            '\t', num2str(bpm), '\t', num2str(best_prediction), ...
-            '\t', num2str(min_err), '\n'], expr_id);
-        bio_err(expr_id) = min_err;
-        
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
-        % cancel
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        [bpm, prediction] = alignmentWaveletExpr(expr_id, true, false, 0, 0, '');
-        min_err = 10000;
-        best_prediction = 0;
-        for j = 1:length(prediction) % find best prediction as min error
-         if abs(bpm - prediction(j)) < min_err
-           min_err = abs(bpm - prediction(j));
-           best_prediction = prediction(j);
-         end
-        end
-        fprintf(['%d Align without Wavelet\t', ...
-            '\t', num2str(bpm), '\t', num2str(best_prediction), ...
-            '\t', num2str(min_err), '\n'], expr_id);
-        can_err(2, expr_id) = min_err;
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % baseline: Biowatch
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    [bpm, prediction] = alignmentWaveletNewData(expr_id, false, false, 0, 0, '');
+    min_err = 10000;
+    best_prediction = 0;
+    for j = 1:length(prediction) % find best prediction as min error
+     if abs(bpm - prediction(j)) < min_err
+       min_err = abs(bpm - prediction(j));
+       best_prediction = prediction(j);
+     end
     end
+    fprintf(['%d Biowatch\t', ...
+        '\t', num2str(bpm), '\t', num2str(best_prediction), ...
+        '\t', num2str(min_err), '\n'], expr_id);
+    bio_err(expr_id) = min_err;
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+    % cancel
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    [bpm, prediction] = alignmentWaveletNewData(expr_id, true, false, 0, 0, '');
+    min_err = 10000;
+    best_prediction = 0;
+    for j = 1:length(prediction) % find best prediction as min error
+     if abs(bpm - prediction(j)) < min_err
+       min_err = abs(bpm - prediction(j));
+       best_prediction = prediction(j);
+     end
+    end
+    fprintf(['%d Align without Wavelet\t', ...
+        '\t', num2str(bpm), '\t', num2str(best_prediction), ...
+        '\t', num2str(min_err), '\n'], expr_id);
+    can_err(2, expr_id) = min_err;
 end
-bio_avg = sum(bio_err) / 5;
-can_avg = sum(can_err) / 5;
+bio_avg = sum(bio_err) / 6;
+can_avg = sum(can_err) / 6;
 tmpCell = {0, 0, 0, 0, 'None', bio_avg};
 for j = 1:length(tmpCell)
     result{rp+1, j} = tmpCell{j};
@@ -88,12 +86,12 @@ for r = wavelet_r
       for order = wavelet_orders
         err = zeros(2, 6);
         for expr_id = 1:6
-          if expr_id ~= 3
+     
             
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%
             % cancel and wavelet
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%
-            [bpm, prediction] = alignmentWaveletExpr(expr_id, true, true, r, order, method);
+            [bpm, prediction] = alignmentWaveletNewData(expr_id, true, true, r, order, method);
             min_err = 10000;
             best_prediction = 0;
             for j = 1:length(prediction) % find best prediction as min error
@@ -110,7 +108,7 @@ for r = wavelet_r
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             % wavelet
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-            [bpm, prediction] = alignmentWaveletExpr(expr_id, false, true, r, order, method);
+            [bpm, prediction] = alignmentWaveletNewData(expr_id, false, true, r, order, method);
             min_err = 10000;
             best_prediction = 0;
             for j = 1:length(prediction) % find best prediction as min error
@@ -123,10 +121,10 @@ for r = wavelet_r
                 '\t', method, '\t', num2str(bpm), '\t', num2str(best_prediction), ...
                 '\t', num2str(min_err), '\n'], expr_id);
             err(2, expr_id) = min_err;
-          end
+          
           fprintf('\n');  
         end
-        avg_err = sum(err, 2) / 5;
+        avg_err = sum(err, 2) / 6;
         tmpCell = {1, 1, order, r, method, avg_err(1)};
         for j = 1:length(tmpCell)
             result{rp+1,j} = tmpCell{j};
@@ -142,4 +140,4 @@ for r = wavelet_r
   end
 end
 
-save('result.mat', 'result');
+save('result_new_data.mat', 'result');
